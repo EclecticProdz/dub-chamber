@@ -1,1 +1,35 @@
 
+name: Build Dub Chamber for macOS
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    runs-on: macos-15
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Configure plugin
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build plugin
+        run: cmake --build build --config Release --parallel 3
+
+      - name: Package plugins
+        run: |
+          mkdir -p package
+          find build -type d \( -name '*.vst3' -o -name '*.component' \) -prune -exec ditto -c -k --sequesterRsrc --keepParent {} package/ \;
+          ls -lah package
+
+      - name: Upload plugin
+        uses: actions/upload-artifact@v4
+        with:
+          name: Dub-Chamber-macOS-plugins
+          path: package/*
+          if-no-files-found: error
+          retention-days: 14
+
