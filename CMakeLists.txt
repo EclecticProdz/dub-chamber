@@ -10,6 +10,7 @@ FetchContent_Declare(JUCE
 FetchContent_MakeAvailable(JUCE)
 
 juce_add_plugin(DubChamber
+
     COMPANY_NAME "Roots Audio Lab"
     BUNDLE_ID "com.rootsaudiolab.dubchamber"
     PLUGIN_MANUFACTURER_CODE RtAL
@@ -42,3 +43,4 @@ target_link_libraries(DubChamber PRIVATE
            juce::juce_recommended_lto_flags
            juce::juce_recommended_warning_flags
 )
+juce_generate_juce_header(DubChamber)
