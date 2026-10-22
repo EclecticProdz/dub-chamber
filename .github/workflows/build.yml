@@ -19,11 +19,17 @@ jobs:
       - name: Build plugin
         run: cmake --build build --config Release --parallel 3
 
+      
       - name: Package plugins
         run: |
           mkdir -p package
-          find build -type d \( -name '*.vst3' -o -name '*.component' \) -prune -exec ditto -c -k --sequesterRsrc --keepParent {} package/ \;
+          find build -type d \( -name '*.vst3' -o -name '*.component' \) -prune -print
+          while IFS= read -r plugin; do
+            name=$(basename "$plugin")
+            ditto -c -k --sequesterRsrc --keepParent "$plugin" "package/${name}.zip"
+          done < <(find build -type d \( -name '*.vst3' -o -name '*.component' \) -prune)
           ls -lah package
+
 
       - name: Upload plugin
         uses: actions/upload-artifact@v4
